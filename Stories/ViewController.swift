@@ -2,46 +2,34 @@
 //  ViewController.swift
 //  Stories
 //
-//  Created by Ankita Satpathy on 16/10/17.
+//  Created by Ankita Satpathy on 17/10/17.
 //  Copyright © 2017 Ankita Satpathy. All rights reserved.
 //
 
 import UIKit
 
-class ViewController: UIViewController, SegmentedProgressBarDelegate {
+class ViewController: UIViewController {
 
-    var storyBar: StoryBar!
-    let imageView = UIImageView()
-    let images = [UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-      self.view.backgroundColor = UIColor.white
-        imageView.frame = view.bounds
-        imageView.contentMode = .scaleAspectFill
-        view.addSubview(imageView)
-        updateImage(index: 0)
-        
-        
-        storyBar = StoryBar(numberOfSegments: 3, duration: 5)
-        storyBar.frame = CGRect(x: 15, y: 15, width: view.frame.width - 30, height: 4)
-        storyBar.delegate = self
-        storyBar.animatingBarColor = UIColor.white
-        storyBar.nonAnimatingBarColor = UIColor.white.withAlphaComponent(0.25)
-        storyBar.padding = 2
-        view.addSubview(storyBar)
-        
-        storyBar.startAnimation()
+
+        // Do any additional setup after loading the view.
     }
 
-    
-    func segmentedProgressBarChangedIndex(index: Int) {
-        updateImage(index: index)
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
     
-    private func updateImage(index: Int) {
-        imageView.image = images[index]
+
+    /*
+    // MARK: - Navigation
+
+    // In a storyboard-based application, you will often want to do a little preparation before navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        // Get the new view controller using segue.destinationViewController.
+        // Pass the selected object to the new view controller.
     }
+    */
 
 }
-
