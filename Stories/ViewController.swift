@@ -26,8 +26,8 @@ class ViewController: UIViewController, SegmentedProgressBarDelegate {
         storyBar = StoryBar(numberOfSegments: 3, duration: 5)
         storyBar.frame = CGRect(x: 15, y: 15, width: view.frame.width - 30, height: 4)
         storyBar.delegate = self
-        storyBar.topColor = UIColor.white
-        storyBar.bottomColor = UIColor.white.withAlphaComponent(0.25)
+        storyBar.animatingBarColor = UIColor.white
+        storyBar.nonAnimatingBarColor = UIColor.white.withAlphaComponent(0.25)
         storyBar.padding = 2
         view.addSubview(storyBar)
         
