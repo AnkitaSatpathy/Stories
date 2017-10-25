@@ -15,8 +15,11 @@ class StoryViewController: UIViewController, SegmentedProgressBarDelegate {
     var storyBar: StoryBar!
     //let imageView = UIImageView()
     let images = [UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")]
+
+                  //[UIImage(named:"nature-animal-dog-playing"), UIImage(named:"pexels-photo-257558"),UIImage(named:"pexels-photo-264778")]]
+                  
     
-    var rowIndex: Int? = nil
+    var rowIndex = Int()
     @IBOutlet weak var cancelBtn: UIButton!
     
     override func viewDidLoad() {
@@ -57,7 +60,8 @@ class StoryViewController: UIViewController, SegmentedProgressBarDelegate {
     }
     
     private func updateImage(index: Int) {
-        imageView.image = images[index]
+        //imageView.image = images[rowIndex][index]
+       imageView.image = images[index]
     }
 
 }

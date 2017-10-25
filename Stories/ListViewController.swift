@@ -29,9 +29,10 @@ class ListViewController: UIViewController {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         if segue.identifier == "showStory" {
-            if let indexPath = tableView.indexPathForSelectedRow {
+            if let index = tableView.indexPathForSelectedRow {
                 let storyVC = segue.destination as! StoryViewController
-                storyVC.rowIndex = indexPath.row
+                storyVC.rowIndex = index.row
+                print(storyVC.rowIndex)
             }
         }
     }
@@ -41,7 +42,7 @@ class ListViewController: UIViewController {
 
 extension ListViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
