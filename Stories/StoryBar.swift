@@ -18,11 +18,12 @@ class Segment {
 
 protocol SegmentedProgressBarDelegate: class {
     func segmentedProgressBarChangedIndex(index: Int)
+    func segmentsEnded()
 }
 
 class StoryBar : UIView{
     
-     weak var delegate: SegmentedProgressBarDelegate?
+    weak var delegate: SegmentedProgressBarDelegate?
     var animatingBarColor = UIColor.gray {
         didSet {
             self.updateColors()
@@ -75,15 +76,57 @@ class StoryBar : UIView{
         hasDoneLayout = true
     }
     
+    func next() {
+        let newIndex = self.currentAnimationIndex + 1
+        if newIndex < self.segments.count {
+            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
+            self.animate(animationIndex: newIndex)
+        } else {
+            self.delegate?.segmentsEnded()
+        }
+    }
+    
+    func updateColors() {
+        for segment in segments {
+            segment.animatingBar.backgroundColor = animatingBarColor
+            segment.nonAnimatingBar.backgroundColor = nonAnimatingBarColor
+        }
+    }
+}
+
+// MARK: - Animations Related
+extension StoryBar {
+    
     func startAnimation() {
         layoutSubviews()
         animate()
     }
     
+    func pauseLayer() {
+        let currentSegment = segments[currentAnimationIndex]
+        let layer = currentSegment.animatingBar.layer
+        
+        let pausedTime: CFTimeInterval = layer.convertTime(CACurrentMediaTime(), from: nil)
+        layer.speed = 0.0
+        layer.timeOffset = pausedTime
+    }
+    
+    func resumeLayer() {
+        let currentSegment = segments[currentAnimationIndex]
+        let layer = currentSegment.animatingBar.layer
+        
+        let pausedTime: CFTimeInterval = layer.timeOffset
+        layer.speed = 1.0
+        layer.timeOffset = 0.0
+        layer.beginTime = 0.0
+        let timeSincePause: CFTimeInterval = layer.convertTime(CACurrentMediaTime(), from: nil) - pausedTime
+        layer.beginTime = timeSincePause
+    }
+    
     func animate(animationIndex: Int = 0) {
         let currentSegment = segments[animationIndex]
         currentAnimationIndex = animationIndex
-       
+        
         UIView.animate(withDuration: duration, delay: 0.0, options: .curveLinear, animations: {
             currentSegment.animatingBar.frame.size.width = currentSegment.nonAnimatingBar.frame.width
         }) { (finished) in
@@ -91,20 +134,6 @@ class StoryBar : UIView{
                 return
             }
             self.next()
-        }
-    }
-    
-    func next() {
-        let newIndex = self.currentAnimationIndex + 1
-        if newIndex < self.segments.count {
-            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
-            self.animate(animationIndex: newIndex)
-        }
-    }
-    func updateColors() {
-        for segment in segments {
-            segment.animatingBar.backgroundColor = animatingBarColor
-            segment.nonAnimatingBar.backgroundColor = nonAnimatingBarColor
         }
     }
 }
