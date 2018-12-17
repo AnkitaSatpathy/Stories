@@ -18,10 +18,11 @@ class StoryViewController: UIViewController {
     
     var rowIndex: Int? = nil
     @IBOutlet weak var cancelBtn: UIButton!
+    var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = UIColor.white
         imageView.frame = view.bounds
         imageView.contentMode = .scaleAspectFill
         //view.addSubview(imageView)
@@ -80,25 +81,24 @@ extension StoryViewController: SegmentedProgressBarDelegate {
 extension StoryViewController {
 
     func addGesture() {
-        let tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap(gesture:)))
+        // for previous and next navigation
+        let tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tapGest)
         
-        let longPressGest = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(gesture:)))
+        // To pause and resume animation
+        let longPressGest = UILongPressGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
         longPressGest.minimumPressDuration = 0.2
         self.view.addGestureRecognizer(longPressGest)
         
-        tapGest.require(toFail: longPressGest)
-    }
-    
-    @objc func handleLongPress(gesture: UILongPressGestureRecognizer) {
-        if gesture.state == .began {
-            storyBar.pauseLayer()
-        } else if gesture.state == .ended {
-            storyBar.resumeLayer()
-        }
+        /*
+         swipe down to dismiss
+         NOTE: Self's presentation style should be "Over Current Context"
+         */
+        let panGest = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
+        self.view.addGestureRecognizer(panGest)
     }
 
-    @objc func handleTap(gesture: UITapGestureRecognizer) {
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
         // Get 40% of Left side
         let maxLeftSide = ((view.bounds.maxX * 40) / 100)
         let touchLocation: CGPoint = gesture.location(in: gesture.view)
@@ -106,6 +106,31 @@ extension StoryViewController {
             storyBar.previous()
         } else {
             storyBar.next()
+        }
+    }
+    
+    @objc func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
+        let touchPoint = sender.location(in: self.view?.window)
+        if sender.state == .began {
+            storyBar.pauseLayer()
+            initialTouchPoint = touchPoint
+        } else if sender.state == .changed {
+            if touchPoint.y - initialTouchPoint.y > 0 {
+                self.view.frame = CGRect(x: 0, y: max(0, touchPoint.y - initialTouchPoint.y),
+                                         width: self.view.frame.size.width,
+                                         height: self.view.frame.size.height)
+            }
+        } else if sender.state == .ended || sender.state == .cancelled {
+            if touchPoint.y - initialTouchPoint.y > 200 {
+                dismiss(animated: true, completion: nil)
+            } else {
+                storyBar.resumeLayer()
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.view.frame = CGRect(x: 0, y: 0,
+                                             width: self.view.frame.size.width,
+                                             height: self.view.frame.size.height)
+                })
+            }
         }
     }
 }
