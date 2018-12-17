@@ -137,7 +137,7 @@ extension StoryBar {
         animate()
     }
     
-    func pauseLayer() {
+    func pause() {
         let currentSegment = segments[currentAnimationIndex]
         let layer = currentSegment.animatingBar.layer
         
@@ -146,7 +146,7 @@ extension StoryBar {
         layer.timeOffset = pausedTime
     }
     
-    func resumeLayer() {
+    func resume() {
         let currentSegment = segments[currentAnimationIndex]
         let layer = currentSegment.animatingBar.layer
         
