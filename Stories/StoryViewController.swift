@@ -67,7 +67,11 @@ extension StoryViewController: SegmentedProgressBarDelegate {
         updateImage(index: index)
     }
     
-    func segmentsEnded() {
+    func segmentedProgressBarReachEnd() {
+        cancelBtnTouched()
+    }
+    
+    func segmentedProgressBarReachPrevious() {
         cancelBtnTouched()
     }
 }
@@ -76,16 +80,32 @@ extension StoryViewController: SegmentedProgressBarDelegate {
 extension StoryViewController {
 
     func addGesture() {
-        let gesture = UILongPressGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
-        gesture.minimumPressDuration = 0.1
-        self.view.addGestureRecognizer(gesture)
+        let tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap(gesture:)))
+        self.view.addGestureRecognizer(tapGest)
+        
+        let longPressGest = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(gesture:)))
+        longPressGest.minimumPressDuration = 0.2
+        self.view.addGestureRecognizer(longPressGest)
+        
+        tapGest.require(toFail: longPressGest)
     }
     
-    @objc func handlePan(gesture: UILongPressGestureRecognizer) {
+    @objc func handleLongPress(gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
             storyBar.pauseLayer()
         } else if gesture.state == .ended {
             storyBar.resumeLayer()
+        }
+    }
+
+    @objc func handleTap(gesture: UITapGestureRecognizer) {
+        // Get 40% of Left side
+        let maxLeftSide = ((view.bounds.maxX * 40) / 100)
+        let touchLocation: CGPoint = gesture.location(in: gesture.view)
+        if touchLocation.x < maxLeftSide {
+            storyBar.previous()
+        } else {
+            storyBar.next()
         }
     }
 }

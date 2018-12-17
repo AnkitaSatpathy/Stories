@@ -18,7 +18,8 @@ class Segment {
 
 protocol SegmentedProgressBarDelegate: class {
     func segmentedProgressBarChangedIndex(index: Int)
-    func segmentsEnded()
+    func segmentedProgressBarReachEnd()
+    func segmentedProgressBarReachPrevious()
 }
 
 class StoryBar : UIView{
@@ -39,6 +40,7 @@ class StoryBar : UIView{
     let duration: TimeInterval
     var currentAnimationIndex = 0
     var hasDoneLayout = false
+    var barAnimation: UIViewPropertyAnimator!
     
     init(numberOfSegments: Int, duration: TimeInterval = 5.0) {
         self.duration = duration
@@ -76,16 +78,6 @@ class StoryBar : UIView{
         hasDoneLayout = true
     }
     
-    func next() {
-        let newIndex = self.currentAnimationIndex + 1
-        if newIndex < self.segments.count {
-            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
-            self.animate(animationIndex: newIndex)
-        } else {
-            self.delegate?.segmentsEnded()
-        }
-    }
-    
     func updateColors() {
         for segment in segments {
             segment.animatingBar.backgroundColor = animatingBarColor
@@ -94,7 +86,50 @@ class StoryBar : UIView{
     }
 }
 
-// MARK: - Animations Related
+// MARK: - Playback
+extension StoryBar {
+    
+    func removeOldAnimation(newWidth: CGFloat = 0) {
+        barAnimation.stopAnimation(true)
+        let oldAnimatingBar = segments[currentAnimationIndex].animatingBar
+        let oldFrame = oldAnimatingBar.frame
+        oldAnimatingBar.frame = CGRect(x: oldFrame.origin.x,
+                                       y: oldFrame.origin.y,
+                                       width: newWidth,
+                                       height: oldFrame.size.height)
+        if barAnimation.state == .stopped {
+            barAnimation.finishAnimation(at: .start)
+        }
+    }
+    
+    func previous() {
+        removeOldAnimation()
+        let newIndex = self.currentAnimationIndex - 1
+        if newIndex < 0 {
+            self.delegate?.segmentedProgressBarReachPrevious()
+        } else {
+            currentAnimationIndex = newIndex
+            removeOldAnimation()
+
+            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
+            self.animate(animationIndex: newIndex)
+        }
+    }
+
+    func next() {
+        let newIndex = self.currentAnimationIndex + 1
+        if newIndex < self.segments.count {
+            let oldSegment = segments[currentAnimationIndex]
+            removeOldAnimation(newWidth: oldSegment.nonAnimatingBar.frame.width)
+            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
+            self.animate(animationIndex: newIndex)
+        } else {
+            self.delegate?.segmentedProgressBarReachEnd()
+        }
+    }
+}
+
+// MARK: - Animations
 extension StoryBar {
     
     func startAnimation() {
@@ -127,13 +162,20 @@ extension StoryBar {
         let currentSegment = segments[animationIndex]
         currentAnimationIndex = animationIndex
         
-        UIView.animate(withDuration: duration, delay: 0.0, options: .curveLinear, animations: {
-            currentSegment.animatingBar.frame.size.width = currentSegment.nonAnimatingBar.frame.width
-        }) { (finished) in
-            if !finished {
-                return
-            }
-            self.next()
+        if let _ = barAnimation {
+            barAnimation = nil
         }
+        
+        barAnimation = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: { 
+            currentSegment.animatingBar.frame.size.width = currentSegment.nonAnimatingBar.frame.width
+        })
+        
+        barAnimation.addCompletion { (position) in
+            if position == .end {
+                self.next()
+            }
+        }
+        
+        barAnimation.startAnimation()
     }
 }
