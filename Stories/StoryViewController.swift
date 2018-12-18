@@ -14,7 +14,7 @@ class StoryViewController: UIViewController {
     
     var storyBar: StoryBar!
     //let imageView = UIImageView()
-    let images = [UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")]
+    let images = [UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")]
     
     var rowIndex: Int? = nil
     @IBOutlet weak var cancelBtn: UIButton!
@@ -22,9 +22,9 @@ class StoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.white
+        self.view.backgroundColor = UIColor.black
         imageView.frame = view.bounds
-        imageView.contentMode = .scaleAspectFill
+        
         //view.addSubview(imageView)
         updateImage(index: 0)
 
@@ -58,6 +58,11 @@ class StoryViewController: UIViewController {
 
     private func updateImage(index: Int) {
         imageView.image = images[index]
+        if imageView.image!.imageOrientation == .up {
+            imageView.contentMode = .scaleAspectFit
+        } else if imageView.image!.imageOrientation == .left || imageView.image!.imageOrientation == .right {
+            imageView.contentMode = .scaleAspectFill
+        }
     }
 }
 
