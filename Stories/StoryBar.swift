@@ -27,12 +27,12 @@ class StoryBar : UIView{
     weak var delegate: SegmentedProgressBarDelegate?
     var animatingBarColor = UIColor.gray {
         didSet {
-            self.updateColors()
+            updateColors()
         }
     }
     var nonAnimatingBarColor = UIColor.gray.withAlphaComponent(0.25) {
         didSet {
-            self.updateColors()
+            updateColors()
         }
     }
     var padding: CGFloat = 2.0
@@ -52,7 +52,7 @@ class StoryBar : UIView{
             addSubview(segment.animatingBar)
             segments.append(segment)
         }
-        self.updateColors()
+        updateColors()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -76,6 +76,10 @@ class StoryBar : UIView{
             segment.animatingBar.layer.cornerRadius = cr
         }
         hasDoneLayout = true
+    }
+    
+    deinit {
+        barAnimation.stopAnimation(true)
     }
     
     func updateColors() {
@@ -104,27 +108,26 @@ extension StoryBar {
     
     func previous() {
         removeOldAnimation()
-        let newIndex = self.currentAnimationIndex - 1
+        let newIndex = currentAnimationIndex - 1
         if newIndex < 0 {
-            self.delegate?.segmentedProgressBarReachPrevious()
+            delegate?.segmentedProgressBarReachPrevious()
         } else {
             currentAnimationIndex = newIndex
             removeOldAnimation()
-
-            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
-            self.animate(animationIndex: newIndex)
+            delegate?.segmentedProgressBarChangedIndex(index: newIndex)
+            animate(animationIndex: newIndex)
         }
     }
 
     func next() {
-        let newIndex = self.currentAnimationIndex + 1
-        if newIndex < self.segments.count {
+        let newIndex = currentAnimationIndex + 1
+        if newIndex < segments.count {
             let oldSegment = segments[currentAnimationIndex]
             removeOldAnimation(newWidth: oldSegment.nonAnimatingBar.frame.width)
-            self.delegate?.segmentedProgressBarChangedIndex(index: newIndex)
-            self.animate(animationIndex: newIndex)
+            delegate?.segmentedProgressBarChangedIndex(index: newIndex)
+            animate(animationIndex: newIndex)
         } else {
-            self.delegate?.segmentedProgressBarReachEnd()
+            delegate?.segmentedProgressBarReachEnd()
         }
     }
 }
@@ -157,9 +160,9 @@ extension StoryBar {
             currentSegment.animatingBar.frame.size.width = currentSegment.nonAnimatingBar.frame.width
         })
         
-        barAnimation.addCompletion { (position) in
+        barAnimation.addCompletion { [weak self] (position) in
             if position == .end {
-                self.next()
+                self?.next()
             }
         }
         
