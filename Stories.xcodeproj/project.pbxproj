@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03F3286B21CA0BFC00D10749 /* OuterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F3286A21CA0BFC00D10749 /* OuterCell.swift */; };
+		03F3286E21CA0EA200D10749 /* InnerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F3286D21CA0EA200D10749 /* InnerCell.swift */; };
 		BC3B9A271F94D59B00BA8F9A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3B9A261F94D59B00BA8F9A /* AppDelegate.swift */; };
 		BC3B9A291F94D59B00BA8F9A /* StoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC3B9A281F94D59B00BA8F9A /* StoryViewController.swift */; };
 		BC3B9A2C1F94D59B00BA8F9A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC3B9A2A1F94D59B00BA8F9A /* Main.storyboard */; };
@@ -17,6 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		03F3286A21CA0BFC00D10749 /* OuterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OuterCell.swift; sourceTree = "<group>"; };
+		03F3286D21CA0EA200D10749 /* InnerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InnerCell.swift; sourceTree = "<group>"; };
 		BC3B9A231F94D59B00BA8F9A /* Stories.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Stories.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC3B9A261F94D59B00BA8F9A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BC3B9A281F94D59B00BA8F9A /* StoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoryViewController.swift; sourceTree = "<group>"; };
@@ -39,6 +43,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03F3286C21CA0E8800D10749 /* CollectionCell */ = {
+			isa = PBXGroup;
+			children = (
+				03F3286A21CA0BFC00D10749 /* OuterCell.swift */,
+				03F3286D21CA0EA200D10749 /* InnerCell.swift */,
+			);
+			path = CollectionCell;
+			sourceTree = "<group>";
+		};
 		BC3B9A1A1F94D59B00BA8F9A = {
 			isa = PBXGroup;
 			children = (
@@ -61,6 +74,7 @@
 				BC3B9A261F94D59B00BA8F9A /* AppDelegate.swift */,
 				BC3B9A3C1F95C69900BA8F9A /* ListViewController.swift */,
 				BC3B9A281F94D59B00BA8F9A /* StoryViewController.swift */,
+				03F3286C21CA0E8800D10749 /* CollectionCell */,
 				BC3B9A381F94D5C300BA8F9A /* StoryBar.swift */,
 				BC3B9A2A1F94D59B00BA8F9A /* Main.storyboard */,
 				BC3B9A2D1F94D59B00BA8F9A /* Assets.xcassets */,
@@ -144,6 +158,8 @@
 			files = (
 				BC3B9A391F94D5C300BA8F9A /* StoryBar.swift in Sources */,
 				BC3B9A291F94D59B00BA8F9A /* StoryViewController.swift in Sources */,
+				03F3286B21CA0BFC00D10749 /* OuterCell.swift in Sources */,
+				03F3286E21CA0EA200D10749 /* InnerCell.swift in Sources */,
 				BC3B9A3D1F95C69900BA8F9A /* ListViewController.swift in Sources */,
 				BC3B9A271F94D59B00BA8F9A /* AppDelegate.swift in Sources */,
 			);
