@@ -43,9 +43,7 @@ class StoryViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        if let cell = outerCollection.cellForItem(at: IndexPath(item: rowIndex, section: 0)) as? OuterCell {
-            currentStoryBar.startAnimation()
-//        }
+        currentStoryBar.startAnimation()
     }
 
     @IBAction func cancelBtnTouched() {
@@ -77,7 +75,7 @@ extension StoryViewController {
             outerCollection.reloadItems(at: [IndexPath(item: StoryHandler.userIndex, section: 0)])
             outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
                                          at: .centeredHorizontally, animated: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { 
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
                 self.currentStoryBar.startAnimation()
             }
         } else {
@@ -93,7 +91,7 @@ extension StoryViewController {
             outerCollection.reloadItems(at: [IndexPath(item: StoryHandler.userIndex, section: 0)])
             outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
                                          at: .centeredHorizontally, animated: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { 
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
                 self.currentStoryBar.startAnimation()
             }
         } else {            
@@ -182,11 +180,11 @@ extension StoryViewController: UICollectionViewDelegate,UICollectionViewDataSour
 // MARK:- Scroll View Delegate
 extension StoryViewController {
 
-//    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-//        currentStoryBar.pause()
-//    }
-//    
-//    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        currentStoryBar.startAnimation()
-//    }
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        currentStoryBar.pause()
+    }
+    
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        currentStoryBar.startAnimation()
+    }
 }

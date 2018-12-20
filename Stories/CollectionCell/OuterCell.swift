@@ -26,7 +26,8 @@ class OuterCell: UICollectionViewCell {
 
     private func addStoryBar() {
         if let _ = storyBar {
-            return
+            storyBar.removeFromSuperview()
+            storyBar = nil
         }
         storyBar = StoryBar(numberOfSegments: arrStory.count, duration: 5)
         storyBar.frame = CGRect(x: 15, y: 15, width: weakParent!.view.frame.width - 30, height: 4)
@@ -67,6 +68,7 @@ extension OuterCell: SegmentedProgressBarDelegate {
 
 // MARK:- Collection View Data Source and Delegate
 extension OuterCell: UICollectionViewDelegate, UICollectionViewDataSource {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return arrStory.count
     }

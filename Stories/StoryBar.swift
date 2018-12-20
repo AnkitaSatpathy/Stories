@@ -97,7 +97,6 @@ extension StoryBar {
     
     func resetSegments() {
         if let _ = barAnimation {
-            barAnimation?.pauseAnimation()
             barAnimation?.stopAnimation(true)
         }
         currentAnimationIndex = 0
@@ -107,6 +106,10 @@ extension StoryBar {
                                                 y: oldFrame.origin.y,
                                                 width: 0,
                                                 height: oldFrame.size.height) 
+        }
+        self.layoutIfNeeded()
+        if barAnimation?.state == .stopped {
+            barAnimation?.finishAnimation(at: .current)
         }
     }
     
@@ -119,7 +122,7 @@ extension StoryBar {
                                        width: newWidth,
                                        height: oldFrame.size.height)
         if barAnimation?.state == .stopped {
-            barAnimation?.finishAnimation(at: .start)
+            barAnimation?.finishAnimation(at: .current)
         }
     }
     
