@@ -2,7 +2,7 @@
 //  InnerCell.swift
 //  Stories
 //
-//  Created by Yudiz on 19/12/18.
+//  Created by Mahavirsinh Gohil on 19/12/18.
 //  Copyright © 2018 Ankita Satpathy. All rights reserved.
 //
 

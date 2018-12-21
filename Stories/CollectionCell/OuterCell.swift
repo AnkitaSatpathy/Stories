@@ -2,7 +2,7 @@
 //  OuterCellCollectionViewCell.swift
 //  Stories
 //
-//  Created by Yudiz on 19/12/18.
+//  Created by Mahavirsinh Gohil on 19/12/18.
 //  Copyright © 2018 Ankita Satpathy. All rights reserved.
 //
 
@@ -13,11 +13,11 @@ class OuterCell: UICollectionViewCell {
     @IBOutlet weak var innerCollection: UICollectionView!
     
     weak var weakParent: StoryViewController?
-    var arrStory: [UIImage]!
+    var story: StoryHandler!
     var storyBar: StoryBar!
     
     func setStory(story: StoryHandler) {
-        arrStory = story.images
+        self.story = story
         addStoryBar()
         innerCollection.reloadData()
         innerCollection.scrollToItem(at: IndexPath(item: story.storyIndex, section: 0),
@@ -29,7 +29,7 @@ class OuterCell: UICollectionViewCell {
             storyBar.removeFromSuperview()
             storyBar = nil
         }
-        storyBar = StoryBar(numberOfSegments: arrStory.count, duration: 5)
+        storyBar = StoryBar(numberOfSegments: story.images.count, duration: 5)
         storyBar.frame = CGRect(x: 15, y: 15, width: weakParent!.view.frame.width - 30, height: 4)
         storyBar.delegate = self
         storyBar.animatingBarColor = UIColor.white
@@ -37,6 +37,7 @@ class OuterCell: UICollectionViewCell {
         storyBar.padding = 2
         self.contentView.addSubview(storyBar)
         weakParent?.currentStoryBar = storyBar
+        storyBar.resetSegmentsTill(index: story.storyIndex)
     }
 }
 
@@ -58,10 +59,12 @@ extension OuterCell: SegmentedProgressBarDelegate {
     }
     
     func segmentedProgressBarReachEnd() {
+        storyBar.resetSegmentsTill(index: story.storyIndex)
         weakParent?.showNextUserStory()
     }
     
     func segmentedProgressBarReachPrevious() {
+        storyBar.resetSegmentsTill(index: story.storyIndex)
         weakParent?.showPreviousUserStory()
     }
 }
@@ -70,12 +73,12 @@ extension OuterCell: SegmentedProgressBarDelegate {
 extension OuterCell: UICollectionViewDelegate, UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return arrStory.count
+        return story.images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "storyCell", for: indexPath) as! InnerCell
-        cell.setImage(arrStory[indexPath.row])
+        cell.setImage(story.images[indexPath.row])
         return cell
     }
 }

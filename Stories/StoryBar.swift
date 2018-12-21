@@ -59,28 +59,9 @@ class StoryBar : UIView{
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        if hasDoneLayout {
-            return
-        }
-        let width = (frame.width - (padding * CGFloat(segments.count - 1)) ) / CGFloat(segments.count)
-        for (index, segment) in segments.enumerated() {
-            let segFrame = CGRect(x: CGFloat(index) * (width + padding), y: 0, width: width, height: frame.height)
-            segment.nonAnimatingBar.frame = segFrame
-            segment.animatingBar.frame = segFrame
-            segment.animatingBar.frame.size.width = 0
-            
-            let cr = frame.height / 2
-            segment.nonAnimatingBar.layer.cornerRadius = cr
-            segment.animatingBar.layer.cornerRadius = cr
-        }
-        hasDoneLayout = true
-    }
-    
     deinit {
         if let _ = barAnimation {
-            barAnimation?.stopAnimation(true)
+            stop()
         }
     }
     
@@ -95,42 +76,47 @@ class StoryBar : UIView{
 // MARK: - Playback
 extension StoryBar {
     
-    func resetSegments() {
+    func resetSegmentFrames() {
+        let width = (frame.width - (padding * CGFloat(segments.count - 1)) ) / CGFloat(segments.count)
+        for (index, segment) in segments.enumerated() {
+            let segFrame = CGRect(x: CGFloat(index) * (width + padding), y: 0, width: width, height: frame.height)
+            segment.nonAnimatingBar.frame = segFrame
+            segment.animatingBar.frame = segFrame
+            segment.animatingBar.frame.size.width = 0
+            
+            let cr = frame.height / 2
+            segment.nonAnimatingBar.layer.cornerRadius = cr
+            segment.animatingBar.layer.cornerRadius = cr
+        }
+    }
+    
+    func resetSegmentsTill(index: Int) {
+        var resetTillIndex = index
         if let _ = barAnimation {
-            barAnimation?.stopAnimation(true)
+            stop()
         }
-        currentAnimationIndex = 0
-        for segment in segments {
-            let oldFrame = segment.nonAnimatingBar.frame
-            segment.animatingBar.frame = CGRect(x: oldFrame.origin.x,
-                                                y: oldFrame.origin.y,
-                                                width: 0,
-                                                height: oldFrame.size.height) 
+
+        if resetTillIndex > segments.count - 1 {
+            resetTillIndex = segments.count - 1
         }
-        self.layoutIfNeeded()
-        if barAnimation?.state == .stopped {
-            barAnimation?.finishAnimation(at: .current)
+
+        currentAnimationIndex = resetTillIndex
+        resetSegmentFrames()
+        for segmentIdx in 0..<resetTillIndex {
+            segments[segmentIdx].animatingBar.frame.size.width = segments[segmentIdx].nonAnimatingBar.frame.size.width
         }
     }
     
     func removeOldAnimation(newWidth: CGFloat = 0) {
-        barAnimation?.stopAnimation(true)
+        stop()
         let oldAnimatingBar = segments[currentAnimationIndex].animatingBar
-        let oldFrame = oldAnimatingBar.frame
-        oldAnimatingBar.frame = CGRect(x: oldFrame.origin.x,
-                                       y: oldFrame.origin.y,
-                                       width: newWidth,
-                                       height: oldFrame.size.height)
-        if barAnimation?.state == .stopped {
-            barAnimation?.finishAnimation(at: .current)
-        }
+        oldAnimatingBar.frame.size.width = newWidth
     }
     
     func previous() {
         removeOldAnimation()
         let newIndex = currentAnimationIndex - 1
         if newIndex < 0 {
-            resetSegments()
             delegate?.segmentedProgressBarReachPrevious()
         } else {
             currentAnimationIndex = newIndex
@@ -148,7 +134,6 @@ extension StoryBar {
             delegate?.segmentedProgressBarChangedIndex(index: newIndex)
             animate(animationIndex: newIndex)
         } else {
-            resetSegments()
             delegate?.segmentedProgressBarReachEnd()
         }
     }
@@ -168,6 +153,13 @@ extension StoryBar {
     
     func resume() {
         barAnimation?.startAnimation()
+    }
+    
+    func stop() {
+        barAnimation?.stopAnimation(true)
+        if barAnimation?.state == .stopped {
+            barAnimation?.finishAnimation(at: .current)
+        }
     }
     
     func animate(animationIndex: Int = 0) {

@@ -27,9 +27,8 @@ class StoryViewController: UIViewController {
     var arrUser = [StoryHandler]()
     var currentStoryBar: StoryBar!
     var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
-    
-    let imgCollection = [[UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")], [UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-452558")]] as! [[UIImage]]
-    
+    var imageCollection: [[UIImage]]!
+
     override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -55,7 +54,7 @@ class StoryViewController: UIViewController {
 extension StoryViewController {
     
     func setupModel() {
-        for collection in imgCollection {
+        for collection in imageCollection {
             arrUser.append(StoryHandler(imgs: collection))
         }
         StoryHandler.userIndex = rowIndex
@@ -72,12 +71,7 @@ extension StoryViewController {
         let newUserIndex = StoryHandler.userIndex + 1
         if newUserIndex < arrUser.count {
             StoryHandler.userIndex = newUserIndex
-            outerCollection.reloadItems(at: [IndexPath(item: StoryHandler.userIndex, section: 0)])
-            outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
-                                         at: .centeredHorizontally, animated: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
-                self.currentStoryBar.startAnimation()
-            }
+            showUpcomingUserStory()
         } else {
             cancelBtnTouched()
         }
@@ -87,15 +81,18 @@ extension StoryViewController {
         let newIndex = StoryHandler.userIndex - 1
         if newIndex >= 0 {
             StoryHandler.userIndex = newIndex
-            arrUser[StoryHandler.userIndex].storyIndex = 0
-            outerCollection.reloadItems(at: [IndexPath(item: StoryHandler.userIndex, section: 0)])
-            outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
-                                         at: .centeredHorizontally, animated: true)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
-                self.currentStoryBar.startAnimation()
-            }
+            showUpcomingUserStory()
         } else {            
             cancelBtnTouched()
+        }
+    }
+    
+    func showUpcomingUserStory() {
+        outerCollection.reloadItems(at: [IndexPath(item: StoryHandler.userIndex, section: 0)])
+        outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
+                                     at: .centeredHorizontally, animated: true)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
+            self.currentStoryBar.animate(animationIndex: self.arrUser[StoryHandler.userIndex].storyIndex)
         }
     }
 }
@@ -181,10 +178,27 @@ extension StoryViewController: UICollectionViewDelegate,UICollectionViewDataSour
 extension StoryViewController {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        currentStoryBar.pause()
+        if let cell = outerCollection.cellForItem(at: IndexPath(item: StoryHandler.userIndex, section: 0)) as? OuterCell {
+            cell.storyBar.pause()
+        }
     }
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        currentStoryBar.startAnimation()
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let lastIndex = StoryHandler.userIndex
+        let pageWidth = outerCollection.frame.size.width
+        let pageNo = Int(floor(((outerCollection.contentOffset.x + pageWidth / 2) / pageWidth)))
+
+        if lastIndex != pageNo {
+            if pageNo < lastIndex {
+                showPreviousUserStory()
+            } else {
+                showNextUserStory()
+            }
+        } else {
+            StoryHandler.userIndex = pageNo
+            if let cell = outerCollection.cellForItem(at: IndexPath(item: StoryHandler.userIndex, section: 0)) as? OuterCell {
+                cell.storyBar.resume()
+            }
+        }
     }
 }

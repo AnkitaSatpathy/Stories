@@ -12,6 +12,10 @@ class ListViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
     
+    let imgCollection = [[UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")],
+                         [UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-452558")],
+                         ] as! [[UIImage]]
+    
     override var prefersStatusBarHidden: Bool {
         return false
     }
@@ -24,6 +28,7 @@ class ListViewController: UIViewController {
         if segue.identifier == "showStory" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let storyVC = segue.destination as! StoryViewController
+                storyVC.imageCollection = imgCollection
                 storyVC.rowIndex = indexPath.row
                 tableView.deselectRow(at: indexPath, animated: false)
             }
@@ -35,7 +40,7 @@ class ListViewController: UIViewController {
 extension ListViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return imgCollection.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
