@@ -14,7 +14,9 @@ class ListViewController: UIViewController {
     
     let imgCollection = [[UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326"),UIImage(named:"pexels-photo-452558")],
                          [UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-452558")],
-                         ] as! [[UIImage]]
+                         [UIImage(named:"pexels-photo-4525"),UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-452558")],
+                         [UIImage(named:"pexels-photo-4525")],
+                         [UIImage(named:"pexels-photo-4525"), UIImage(named:"pexels-photo-452558"), UIImage(named:"pexels-photo-302053"), UIImage(named:"pexels-photo-415326")]] as! [[UIImage]]
     
     override var prefersStatusBarHidden: Bool {
         return false
@@ -45,7 +47,7 @@ extension ListViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as UITableViewCell
-        cell.textLabel?.text = "Story \(indexPath.row + 1)"
+        cell.textLabel?.text = "User \(indexPath.row + 1)"
         return cell
     }
     

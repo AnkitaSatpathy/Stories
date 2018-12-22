@@ -3,7 +3,7 @@
 //  Stories
 //
 //  Created by Mahavirsinh Gohil on 19/12/18.
-//  Copyright © 2018 Ankita Satpathy. All rights reserved.
+//  Copyright © 2018 Mahavirsinh Gohil. All rights reserved.
 //
 
 import UIKit

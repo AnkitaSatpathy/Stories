@@ -8,16 +8,6 @@
 
 import UIKit
 
-class StoryHandler {
-    var images: [UIImage]
-    var storyIndex: Int = 0
-    static var userIndex: Int = 0
-    
-    init(imgs: [UIImage]) {
-        images = imgs
-    }
-}
-
 class StoryViewController: UIViewController {
 
     @IBOutlet weak var outerCollection: UICollectionView!
@@ -92,8 +82,17 @@ extension StoryViewController {
         outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
                                      at: .centeredHorizontally, animated: true)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
-            self.currentStoryBar.animate(animationIndex: self.arrUser[StoryHandler.userIndex].storyIndex)
+            if let storyBar = self.getCurrentStory() {
+                storyBar.animate(animationIndex: self.arrUser[StoryHandler.userIndex].storyIndex)
+            }
         }
+    }
+    
+    func getCurrentStory() -> StoryBar? {
+        if let cell = outerCollection.cellForItem(at: IndexPath(item: StoryHandler.userIndex, section: 0)) as? OuterCell {
+            return cell.storyBar
+        }
+        return nil
     }
 }
 
@@ -122,10 +121,12 @@ extension StoryViewController {
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {
         let touchLocation: CGPoint = gesture.location(in: gesture.view)
         let maxLeftSide = ((view.bounds.maxX * 40) / 100) // Get 40% of Left side
-        if touchLocation.x < maxLeftSide {
-            currentStoryBar.previous()
-        } else {
-            currentStoryBar.next()
+        if let storyBar = getCurrentStory() {
+            if touchLocation.x < maxLeftSide {
+                storyBar.previous()
+            } else {
+                storyBar.next()
+            }
         }
     }
     
@@ -178,8 +179,8 @@ extension StoryViewController: UICollectionViewDelegate,UICollectionViewDataSour
 extension StoryViewController {
 
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        if let cell = outerCollection.cellForItem(at: IndexPath(item: StoryHandler.userIndex, section: 0)) as? OuterCell {
-            cell.storyBar.pause()
+        if let storyBar = getCurrentStory() {
+            storyBar.pause()
         }
     }
     

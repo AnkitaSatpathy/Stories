@@ -39,7 +39,6 @@ class StoryBar : UIView{
     var segments = [Segment]()
     let duration: TimeInterval
     var currentAnimationIndex = 0
-    var hasDoneLayout = false
     var barAnimation: UIViewPropertyAnimator?
     
     init(numberOfSegments: Int, duration: TimeInterval = 5.0) {
@@ -142,16 +141,34 @@ extension StoryBar {
 // MARK: - Animations
 extension StoryBar {
     
+    func showStoryBar() {
+        if self.alpha == 0 {
+            UIView.animate(withDuration: 0.3) { 
+                self.alpha = 1
+            }
+        }
+    }
+    
+    func hideStoryBar() {
+        if self.alpha == 1 {
+            UIView.animate(withDuration: 0.3) { 
+                self.alpha = 0
+            }
+        }
+    }
+    
     func startAnimation() {
         layoutSubviews()
         animate()
     }
     
     func pause() {
+        hideStoryBar()
         barAnimation?.pauseAnimation()
     }
     
     func resume() {
+        showStoryBar()
         barAnimation?.startAnimation()
     }
     
@@ -170,6 +187,7 @@ extension StoryBar {
             barAnimation = nil
         }
         
+        showStoryBar()
         barAnimation = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: { 
             currentSegment.animatingBar.frame.size.width = currentSegment.nonAnimatingBar.frame.width
         })
