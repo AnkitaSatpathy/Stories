@@ -205,11 +205,8 @@ extension StoryViewController {
         let pageNo = Int(floor(((outerCollection.contentOffset.x + pageWidth / 2) / pageWidth)))
 
         if lastIndex != pageNo {
-            if pageNo < lastIndex {
-                showPreviousUserStory()
-            } else {
-                showNextUserStory()
-            }
+            StoryHandler.userIndex = pageNo
+            showUpcomingUserStory()
         } else {
             if let storyBar = getCurrentStory() {
                 self.addGesture()
