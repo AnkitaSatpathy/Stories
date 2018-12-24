@@ -59,15 +59,26 @@ class StoryBar : UIView{
     }
     
     deinit {
-        if let _ = barAnimation {
-            stop()
-        }
+        stop()
     }
     
     func updateColors() {
         for segment in segments {
             segment.animatingBar.backgroundColor = animatingBarColor
             segment.nonAnimatingBar.backgroundColor = nonAnimatingBarColor
+        }
+    }
+    
+    func getYPosition() -> CGFloat {
+        if #available(iOS 11.0, *) {
+            let _appDelegator = UIApplication.shared.delegate! as! AppDelegate
+            if let bottom = _appDelegator.window?.safeAreaInsets.bottom {
+                return bottom
+            } else {
+                return 0
+            }
+        } else {
+            return 0
         }
     }
 }
@@ -77,11 +88,14 @@ extension StoryBar {
     
     func resetSegmentFrames() {
         let width = (frame.width - (padding * CGFloat(segments.count - 1)) ) / CGFloat(segments.count)
-        for (index, segment) in segments.enumerated() {
-            let segFrame = CGRect(x: CGFloat(index) * (width + padding), y: 0, width: width, height: frame.height)
+        for (index, segment) in segments.enumerated() {            
+            let segFrame = CGRect(x: CGFloat(index) * (width + padding),
+                                  y: getYPosition(),
+                                  width: width,
+                                  height: frame.height)
             segment.nonAnimatingBar.frame = segFrame
-            segment.animatingBar.frame = segFrame
-            segment.animatingBar.frame.size.width = 0
+            segment.animatingBar.frame = CGRect(origin: segFrame.origin,
+                                                size: CGSize(width: 0, height: segFrame.size.height))
             
             let cr = frame.height / 2
             segment.nonAnimatingBar.layer.cornerRadius = cr
@@ -91,9 +105,7 @@ extension StoryBar {
     
     func resetSegmentsTill(index: Int) {
         var resetTillIndex = index
-        if let _ = barAnimation {
-            stop()
-        }
+        stop()
 
         if resetTillIndex > segments.count - 1 {
             resetTillIndex = segments.count - 1
@@ -143,7 +155,7 @@ extension StoryBar {
     
     func showStoryBar() {
         if self.alpha == 0 {
-            UIView.animate(withDuration: 0.3) { 
+            UIView.animate(withDuration: 0.2) { 
                 self.alpha = 1
             }
         }
@@ -151,7 +163,7 @@ extension StoryBar {
     
     func hideStoryBar() {
         if self.alpha == 1 {
-            UIView.animate(withDuration: 0.3) { 
+            UIView.animate(withDuration: 0.2) { 
                 self.alpha = 0
             }
         }
@@ -173,9 +185,11 @@ extension StoryBar {
     }
     
     func stop() {
-        barAnimation?.stopAnimation(true)
-        if barAnimation?.state == .stopped {
-            barAnimation?.finishAnimation(at: .current)
+        if let _ = barAnimation {
+            barAnimation?.stopAnimation(true)
+            if barAnimation?.state == .stopped {
+                barAnimation?.finishAnimation(at: .current)
+            }
         }
     }
     
@@ -198,6 +212,7 @@ extension StoryBar {
             }
         }
         
+        barAnimation?.isUserInteractionEnabled = false
         barAnimation?.startAnimation()
     }
 }

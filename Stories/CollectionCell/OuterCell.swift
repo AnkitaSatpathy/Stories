@@ -35,9 +35,8 @@ class OuterCell: UICollectionViewCell {
         storyBar.animatingBarColor = UIColor.white
         storyBar.nonAnimatingBarColor = UIColor.white.withAlphaComponent(0.25)
         storyBar.padding = 2
-        self.contentView.addSubview(storyBar)
-        weakParent?.currentStoryBar = storyBar
         storyBar.resetSegmentsTill(index: story.storyIndex)
+        self.contentView.addSubview(storyBar)
     }
 }
 
@@ -59,12 +58,10 @@ extension OuterCell: SegmentedProgressBarDelegate {
     }
     
     func segmentedProgressBarReachEnd() {
-        storyBar.resetSegmentsTill(index: story.storyIndex)
         weakParent?.showNextUserStory()
     }
     
     func segmentedProgressBarReachPrevious() {
-        storyBar.resetSegmentsTill(index: story.storyIndex)
         weakParent?.showPreviousUserStory()
     }
 }

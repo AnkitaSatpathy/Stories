@@ -15,9 +15,12 @@ class StoryViewController: UIViewController {
     
     var rowIndex:Int = 0
     var arrUser = [StoryHandler]()
-    var currentStoryBar: StoryBar!
     var initialTouchPoint: CGPoint = CGPoint(x: 0,y: 0)
     var imageCollection: [[UIImage]]!
+    
+    var tapGest: UITapGestureRecognizer!
+    var longPressGest: UILongPressGestureRecognizer!
+    var panGest: UIPanGestureRecognizer!
 
     override var prefersStatusBarHidden: Bool {
         return true
@@ -32,7 +35,9 @@ class StoryViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        currentStoryBar.startAnimation()
+        if let storyBar = getCurrentStory() {
+            storyBar.startAnimation()   
+        }
     }
 
     @IBAction func cancelBtnTouched() {
@@ -72,18 +77,20 @@ extension StoryViewController {
         if newIndex >= 0 {
             StoryHandler.userIndex = newIndex
             showUpcomingUserStory()
-        } else {            
+        } else {
             cancelBtnTouched()
         }
     }
     
     func showUpcomingUserStory() {
-        outerCollection.reloadItems(at: [IndexPath(item: StoryHandler.userIndex, section: 0)])
-        outerCollection.scrollToItem(at: IndexPath(item: StoryHandler.userIndex, section: 0),
-                                     at: .centeredHorizontally, animated: true)
+        removeGestures()
+        let indexPath = IndexPath(item: StoryHandler.userIndex, section: 0)
+        outerCollection.reloadItems(at: [indexPath])
+        outerCollection.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { 
             if let storyBar = self.getCurrentStory() {
                 storyBar.animate(animationIndex: self.arrUser[StoryHandler.userIndex].storyIndex)
+                self.addGesture()
             }
         }
     }
@@ -102,11 +109,11 @@ extension StoryViewController {
     func addGesture() {
         
         // for previous and next navigation
-        let tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tapGest)
         
         // To pause and resume animation
-        let longPressGest = UILongPressGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
+        longPressGest = UILongPressGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
         longPressGest.minimumPressDuration = 0.2
         self.view.addGestureRecognizer(longPressGest)
         
@@ -114,8 +121,14 @@ extension StoryViewController {
          swipe down to dismiss
          NOTE: Self's presentation style should be "Over Current Context"
          */
-        let panGest = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
+        panGest = UIPanGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
         self.view.addGestureRecognizer(panGest)
+    }
+    
+    func removeGestures() {
+        self.view.removeGestureRecognizer(tapGest)
+        self.view.removeGestureRecognizer(longPressGest)
+        self.view.removeGestureRecognizer(panGest)
     }
     
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {
@@ -131,9 +144,11 @@ extension StoryViewController {
     }
     
     @objc func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
+        guard let storyBar = getCurrentStory() else { return }
+
         let touchPoint = sender.location(in: self.view?.window)        
         if sender.state == .began {
-            currentStoryBar.pause()
+            storyBar.pause()
             initialTouchPoint = touchPoint
         } else if sender.state == .changed {
             if touchPoint.y - initialTouchPoint.y > 0 {
@@ -145,7 +160,7 @@ extension StoryViewController {
             if touchPoint.y - initialTouchPoint.y > 200 {
                 dismiss(animated: true, completion: nil)
             } else {
-                currentStoryBar.resume()
+                storyBar.resume()
                 UIView.animate(withDuration: 0.3, animations: {
                     self.view.frame = CGRect(x: 0, y: 0,
                                              width: self.view.frame.size.width,
@@ -178,7 +193,7 @@ extension StoryViewController: UICollectionViewDelegate,UICollectionViewDataSour
 // MARK:- Scroll View Delegate
 extension StoryViewController {
 
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let storyBar = getCurrentStory() {
             storyBar.pause()
         }
@@ -196,9 +211,9 @@ extension StoryViewController {
                 showNextUserStory()
             }
         } else {
-            StoryHandler.userIndex = pageNo
-            if let cell = outerCollection.cellForItem(at: IndexPath(item: StoryHandler.userIndex, section: 0)) as? OuterCell {
-                cell.storyBar.resume()
+            if let storyBar = getCurrentStory() {
+                self.addGesture()
+                storyBar.resume()
             }
         }
     }
