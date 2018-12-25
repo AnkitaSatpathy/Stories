@@ -67,10 +67,14 @@ extension OuterCell: SegmentedProgressBarDelegate {
 }
 
 // MARK:- Collection View Data Source and Delegate
-extension OuterCell: UICollectionViewDelegate, UICollectionViewDataSource {
+extension OuterCell: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return story.images.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return UIScreen.main.bounds.size
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
