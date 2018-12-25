@@ -19,7 +19,6 @@ class StoryViewController: UIViewController {
     var imageCollection: [[UIImage]]!
     
     var tapGest: UITapGestureRecognizer!
-    var longPressGest: UILongPressGestureRecognizer!
     var panGest: UIPanGestureRecognizer!
 
     override var prefersStatusBarHidden: Bool {
@@ -112,11 +111,6 @@ extension StoryViewController {
         tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tapGest)
         
-        // To pause and resume animation
-        longPressGest = UILongPressGestureRecognizer(target: self, action: #selector(panGestureRecognizerHandler))
-        longPressGest.minimumPressDuration = 0.2
-        self.view.addGestureRecognizer(longPressGest)
-        
         /*
          swipe down to dismiss
          NOTE: Self's presentation style should be "Over Current Context"
@@ -127,7 +121,6 @@ extension StoryViewController {
     
     func removeGestures() {
         self.view.removeGestureRecognizer(tapGest)
-        self.view.removeGestureRecognizer(longPressGest)
         self.view.removeGestureRecognizer(panGest)
     }
     

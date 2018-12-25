@@ -175,13 +175,19 @@ extension StoryBar {
     }
     
     func pause() {
-        hideStoryBar()
-        barAnimation?.pauseAnimation()
+        guard let barAnimation = barAnimation else { return }
+        if barAnimation.isRunning {
+            hideStoryBar()
+            barAnimation.pauseAnimation()
+        }
     }
     
     func resume() {
-        showStoryBar()
-        barAnimation?.startAnimation()
+        guard let barAnimation = barAnimation else { return }
+        if !barAnimation.isRunning {
+            showStoryBar()
+            barAnimation.startAnimation()
+        }
     }
     
     func stop() {
