@@ -19,6 +19,7 @@ class OuterCell: UICollectionViewCell {
     func setStory(story: StoryHandler) {
         self.story = story
         addStoryBar()
+        manageZooming()
         innerCollection.reloadData()
         innerCollection.scrollToItem(at: IndexPath(item: story.storyIndex, section: 0),
                                      at: .centeredHorizontally, animated: false)
@@ -37,6 +38,16 @@ class OuterCell: UICollectionViewCell {
         storyBar.padding = 2
         storyBar.resetSegmentsTill(index: story.storyIndex)
         self.contentView.addSubview(storyBar)
+    }
+    
+    func manageZooming() {
+        storyZoomingBlock = { (isZooming) in
+            if isZooming {
+                self.storyBar.pause()   
+            } else {
+                self.storyBar.resume()
+            }
+        }
     }
 }
 

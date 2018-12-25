@@ -80,7 +80,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="69i-X2-Eub">
+                                                <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="69i-X2-Eub">
                                                     <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="N6c-0V-bJ6">
@@ -97,19 +97,33 @@
                                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
-                                                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Fz-t6-Ezg">
+                                                                    <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0ei-CO-o6g">
                                                                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                                                    </imageView>
+                                                                        <subviews>
+                                                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1Fz-t6-Ezg">
+                                                                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                                                            </imageView>
+                                                                        </subviews>
+                                                                        <constraints>
+                                                                            <constraint firstItem="1Fz-t6-Ezg" firstAttribute="height" secondItem="0ei-CO-o6g" secondAttribute="height" id="3SA-VK-2ln"/>
+                                                                            <constraint firstItem="1Fz-t6-Ezg" firstAttribute="leading" secondItem="0ei-CO-o6g" secondAttribute="leading" id="agk-7B-RrP"/>
+                                                                            <constraint firstAttribute="bottom" secondItem="1Fz-t6-Ezg" secondAttribute="bottom" id="axk-Mb-gox"/>
+                                                                            <constraint firstItem="1Fz-t6-Ezg" firstAttribute="top" secondItem="0ei-CO-o6g" secondAttribute="top" id="dGc-UG-bWY"/>
+                                                                            <constraint firstItem="1Fz-t6-Ezg" firstAttribute="width" secondItem="0ei-CO-o6g" secondAttribute="width" id="i52-2L-8S5"/>
+                                                                            <constraint firstAttribute="trailing" secondItem="1Fz-t6-Ezg" secondAttribute="trailing" id="iar-f5-oFL"/>
+                                                                        </constraints>
+                                                                    </scrollView>
                                                                 </subviews>
                                                             </view>
                                                             <constraints>
-                                                                <constraint firstItem="1Fz-t6-Ezg" firstAttribute="top" secondItem="is1-tt-ynq" secondAttribute="top" id="14w-yu-Qil"/>
-                                                                <constraint firstAttribute="trailing" secondItem="1Fz-t6-Ezg" secondAttribute="trailing" id="TzK-VX-6BE"/>
-                                                                <constraint firstAttribute="bottom" secondItem="1Fz-t6-Ezg" secondAttribute="bottom" id="fGd-IW-kQh"/>
-                                                                <constraint firstItem="1Fz-t6-Ezg" firstAttribute="leading" secondItem="is1-tt-ynq" secondAttribute="leading" id="y4t-C2-Vgw"/>
+                                                                <constraint firstItem="0ei-CO-o6g" firstAttribute="top" secondItem="is1-tt-ynq" secondAttribute="top" id="5hX-uP-UTR"/>
+                                                                <constraint firstAttribute="bottom" secondItem="0ei-CO-o6g" secondAttribute="bottom" id="62k-73-XNI"/>
+                                                                <constraint firstAttribute="trailing" secondItem="0ei-CO-o6g" secondAttribute="trailing" id="FrL-D4-rn6"/>
+                                                                <constraint firstItem="0ei-CO-o6g" firstAttribute="leading" secondItem="is1-tt-ynq" secondAttribute="leading" id="pVR-3s-BqV"/>
                                                             </constraints>
                                                             <connections>
                                                                 <outlet property="imgStory" destination="1Fz-t6-Ezg" id="77S-0F-oR6"/>
+                                                                <outlet property="scrollV" destination="0ei-CO-o6g" id="mf4-Nl-sHP"/>
                                                             </connections>
                                                         </collectionViewCell>
                                                     </cells>
