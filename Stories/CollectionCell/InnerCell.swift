@@ -41,18 +41,16 @@ class InnerCell: UICollectionViewCell {
 
 extension InnerCell: UIScrollViewDelegate {
     
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        print("scrollViewWillBeginDragging")
+    func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
         storyZoomingBlock?(true)
     }
-    
+
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imgStory
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         UIView.animate(withDuration: 0.3, animations: { 
-            print("scrollViewDidEndDragging")
             self.scrollV.zoomScale = 1.0
         }) { (isAnimationDone) in
             if isAnimationDone {
