@@ -27,6 +27,7 @@ class StoryViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.view.layoutIfNeeded()
         cancelBtn.addTarget(self, action: #selector(cancelBtnTouched), for: .touchUpInside)
         setupModel()
         addGesture()

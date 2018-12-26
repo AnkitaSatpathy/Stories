@@ -18,6 +18,7 @@ class OuterCell: UICollectionViewCell {
     
     func setStory(story: StoryHandler) {
         self.story = story
+        self.contentView.layoutIfNeeded()
         addStoryBar()
         manageZooming()
         innerCollection.reloadData()
