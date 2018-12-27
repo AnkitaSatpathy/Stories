@@ -88,7 +88,7 @@ extension StoryBar {
     
     func resetSegmentFrames() {
         let width = (frame.width - (padding * CGFloat(segments.count - 1)) ) / CGFloat(segments.count)
-        for (index, segment) in segments.enumerated() {            
+        for (index, segment) in segments.enumerated() {
             let segFrame = CGRect(x: CGFloat(index) * (width + padding),
                                   y: getYPosition(),
                                   width: width,
@@ -155,7 +155,7 @@ extension StoryBar {
     
     func showStoryBar() {
         if self.alpha == 0 {
-            UIView.animate(withDuration: 0.2) { 
+            UIView.animate(withDuration: 0.2) {
                 self.alpha = 1
             }
         }
@@ -163,7 +163,7 @@ extension StoryBar {
     
     func hideStoryBar() {
         if self.alpha == 1 {
-            UIView.animate(withDuration: 0.2) { 
+            UIView.animate(withDuration: 0.2) {
                 self.alpha = 0
             }
         }

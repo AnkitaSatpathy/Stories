@@ -19,6 +19,7 @@ class StoryViewController: UIViewController {
     var imageCollection: [[UIImage]]!
     
     var tapGest: UITapGestureRecognizer!
+    var longPressGest: UILongPressGestureRecognizer!
     var panGest: UIPanGestureRecognizer!
 
     override var prefersStatusBarHidden: Bool {
@@ -36,7 +37,7 @@ class StoryViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if let storyBar = getCurrentStory() {
-            storyBar.startAnimation()   
+            storyBar.startAnimation()
         }
     }
 
@@ -112,6 +113,11 @@ extension StoryViewController {
         tapGest = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         self.view.addGestureRecognizer(tapGest)
         
+        longPressGest = UILongPressGestureRecognizer(target: self,
+                                                         action: #selector(panGestureRecognizerHandler))
+        longPressGest.minimumPressDuration = 0.2
+        self.view.addGestureRecognizer(longPressGest)
+        
         /*
          swipe down to dismiss
          NOTE: Self's presentation style should be "Over Current Context"
@@ -122,6 +128,7 @@ extension StoryViewController {
     
     func removeGestures() {
         self.view.removeGestureRecognizer(tapGest)
+        self.view.removeGestureRecognizer(longPressGest)
         self.view.removeGestureRecognizer(panGest)
     }
     
@@ -140,7 +147,7 @@ extension StoryViewController {
     @objc func panGestureRecognizerHandler(_ sender: UIPanGestureRecognizer) {
         guard let storyBar = getCurrentStory() else { return }
 
-        let touchPoint = sender.location(in: self.view?.window)        
+        let touchPoint = sender.location(in: self.view?.window)
         if sender.state == .began {
             storyBar.pause()
             initialTouchPoint = touchPoint

@@ -20,7 +20,6 @@ class OuterCell: UICollectionViewCell {
         self.story = story
         self.contentView.layoutIfNeeded()
         addStoryBar()
-        manageZooming()
         innerCollection.reloadData()
         innerCollection.scrollToItem(at: IndexPath(item: story.storyIndex, section: 0),
                                      at: .centeredHorizontally, animated: false)
@@ -31,7 +30,7 @@ class OuterCell: UICollectionViewCell {
             storyBar.removeFromSuperview()
             storyBar = nil
         }
-        storyBar = StoryBar(numberOfSegments: story.images.count, duration: 5)
+        storyBar = StoryBar(numberOfSegments: story.images.count)
         storyBar.frame = CGRect(x: 15, y: 15, width: weakParent!.view.frame.width - 30, height: 4)
         storyBar.delegate = self
         storyBar.animatingBarColor = UIColor.white
@@ -40,25 +39,6 @@ class OuterCell: UICollectionViewCell {
         storyBar.resetSegmentsTill(index: story.storyIndex)
         self.contentView.addSubview(storyBar)
     }
-    
-    func manageZooming() {
-        storyZoomingBlock = { (isZooming) in
-            if isZooming {
-                self.storyBar.pause()   
-            } else {
-                self.storyBar.resume()
-            }
-        }
-    }
-}
-
-// MARK:- Helper Methods
-extension OuterCell {
-    
-    func showImageWithIndex(_ index: Int) {
-        innerCollection.scrollToItem(at: IndexPath(item: index, section: 0),
-                                     at: .centeredHorizontally, animated: false)
-    }
 }
 
 // MARK:- Segmented ProgressBar Delegate
@@ -66,7 +46,8 @@ extension OuterCell: SegmentedProgressBarDelegate {
 
     func segmentedProgressBarChangedIndex(index: Int) {
         weakParent?.currentStoryIndexChanged(index: index)
-        showImageWithIndex(index)
+        innerCollection.scrollToItem(at: IndexPath(item: index, section: 0),
+                                     at: .centeredHorizontally, animated: false)
     }
     
     func segmentedProgressBarReachEnd() {
@@ -75,6 +56,18 @@ extension OuterCell: SegmentedProgressBarDelegate {
     
     func segmentedProgressBarReachPrevious() {
         weakParent?.showPreviousUserStory()
+    }
+}
+
+// MARK:- Segmented ProgressBar Delegate
+extension OuterCell: ImageZoomDelegate {
+
+    func imageZoomStart() {
+        storyBar.pause()
+    }
+    
+    func imageZoomEnd() {
+        storyBar.resume()
     }
 }
 
@@ -92,6 +85,7 @@ extension OuterCell: UICollectionViewDelegate, UICollectionViewDataSource, UICol
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "storyCell", for: indexPath) as! InnerCell
         cell.setImage(story.images[indexPath.row])
+        cell.delegate = self
         return cell
     }
 }

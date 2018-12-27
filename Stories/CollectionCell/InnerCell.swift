@@ -8,9 +8,14 @@
 
 import UIKit
 
-var storyZoomingBlock:((_ isZooming: Bool) -> ())?
+protocol ImageZoomDelegate: class {
+    func imageZoomStart()
+    func imageZoomEnd()
+}
 
 class InnerCell: UICollectionViewCell {
+    
+    weak var delegate: ImageZoomDelegate?
     
     @IBOutlet weak var scrollV: UIScrollView!
     @IBOutlet weak var imgStory: UIImageView!
@@ -25,7 +30,6 @@ class InnerCell: UICollectionViewCell {
         scrollV.clipsToBounds = true;
         scrollV.delegate = self
         scrollV.addSubview(imgStory)
-        addGestures()
     }
 }
 
@@ -49,43 +53,12 @@ extension InnerCell {
     private func resetImage() {
         UIView.animate(withDuration: 0.3, animations: { 
             self.scrollV.zoomScale = 1.0
-        }) { (isAnimationDone) in
+        }) { [weak self] (isAnimationDone) in
             if isAnimationDone {
-                storyZoomingBlock?(false)
-                self.isImageDragged = false
+                self?.delegate?.imageZoomEnd()
+                self?.isImageDragged = false
             }
         }
-    }
-}
-
-// MARK:- Gestures
-extension InnerCell: UIGestureRecognizerDelegate {
-    
-    private func addGestures() {
-        let longPressGest = UILongPressGestureRecognizer(target: self,
-                                                         action: #selector(longPressGestureHandler))
-        longPressGest.minimumPressDuration = 0.2
-        self.contentView.addGestureRecognizer(longPressGest)
-        
-        // Disable Default Pinch Gesture 
-        for gesture in scrollV.gestureRecognizers! {
-            if gesture is UIPinchGestureRecognizer {
-                gesture.isEnabled = false
-            }
-        }
-        
-        // Adding our own Pinch Gesture
-        let pinchGest = UIPinchGestureRecognizer(target: self, action: #selector(viewForZooming(in:)))
-        pinchGest.delegate = self
-        scrollV.addGestureRecognizer(pinchGest)
-    }
-    
-    @objc private func longPressGestureHandler(_ sender: UILongPressGestureRecognizer) {
-        if sender.state == .began {
-            storyZoomingBlock?(true)
-        } else if sender.state == .ended || sender.state == .cancelled {
-            storyZoomingBlock?(false)
-        }   
     }
 }
 
@@ -93,7 +66,7 @@ extension InnerCell: UIGestureRecognizerDelegate {
 extension InnerCell: UIScrollViewDelegate {
     
     func scrollViewWillBeginZooming(_ scrollView: UIScrollView, with view: UIView?) {
-        storyZoomingBlock?(true)
+        delegate?.imageZoomStart()
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
